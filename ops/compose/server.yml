@@ -1,0 +1,83 @@
+version: '2'
+services:
+  proxy:
+    image: jwilder/nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - "${HOST_STORE}/certs:/etc/nginx/certs"
+      - "${HOST_STORE}/vhost.d:/etc/nginx/vhost.d"
+      - "${HOST_STORE}/html:/usr/share/nginx/html"
+      - "/var/run/docker.sock:/tmp/docker.sock:ro"
+
+  letsencrypt:
+    image: jrcs/letsencrypt-nginx-proxy-companion
+    depends_on:
+        - proxy
+    volumes_from:
+        - proxy
+    volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    environment:
+        - DEFAULT_EMAIL
+
+  frontend:
+    image: surfer/frontend
+    depends_on:
+       - db
+    links:
+       - "db:database"
+    volumes:
+       - "${HOST_STORE}/vesta/Frontend/project:/frontend"
+    environment:
+       - "VIRTUAL_HOST=ges.plink.love"
+       - "VIRTUAL_PORT=5000"
+       - "LETSENCRYPT_HOST=ges.plink.love"
+
+  backend:
+    image: surfer/vesta-engine
+    depends_on:
+       - db
+    links:
+       - "db:database"
+    volumes:
+       - "${HOST_STORE}/vesta/Engine2:/engine"
+    environment:
+       - "VIRTUAL_HOST=api-ges.plink.love"
+       - "VIRTUAL_PORT=8888"
+       - "LETSENCRYPT_HOST=api-ges.plink.love"
+
+#  frontend:
+#    image: surfer/plink-frontend:nix-1.2.10
+#    env_file: ../env/dev/frontend.env
+#  backend:
+#    image: surfer/plink-backend:nix-1.8.6
+#    env_file: ../env/dev/backend.env
+#    volumes:
+#      - "/var/lib/plink:/var/lib/plink"
+#    ports:
+#      - "3500:3500"
+
+  db:
+    image: mongo:4.1.13
+    ports:
+      - "27017:27017"
+    volumes:
+      - "${HOST_STORE}/data/db:/data/db"
+      - "${HOST_STORE}/data/configdb:/data/configdb"
+
+#  `docker run -d -p 3000:3000 -v [user_folder]:/data/db --name mongoclient -e MONGO_URL=mongodb://127.0.0.1:27017/[somedb] mongoclient/mongoclient`
+  mongoclient:
+    image: mongoclient/mongoclient
+    links:
+      - "db:database"
+    #ports:
+    #  - "3000:3000"
+    volumes:
+      - "${HOST_STORE}/mongoclient:/data/db"
+    environment:
+      - "MONGO_URL=mongodb://database:27017/mongoclient"
+      - "VIRTUAL_HOST=nosqlclient.choycreative.com"
+      - "VIRTUAL_PORT=3000"
+      - "LETSENCRYPT_HOST=nosqlclient.choycreative.com"

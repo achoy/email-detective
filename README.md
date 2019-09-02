@@ -4,15 +4,15 @@ python based email searcher
 ## Goals
 
 1. Build a JWT app
-  - REST based django server
+  a. REST based django server
 2. Allow search/filtering email from email headers
 3. Access email via IMAP apis
-  - gmail account
+  a. gmail account
 4. Run using docker containers: nginx-proxy, letsencrypt, python-server, mongodb
 
 ## Setup Environment
 
-- create project templates, Pipfile, and virtualenv
+- Create project templates, Pipfile, and virtualenv
 
 ```shell
 # create Pipfile and environment
@@ -21,10 +21,30 @@ pipenv install djangorestframework
 
 # Switch to virtualenv
 pipenv shell
-pipenv install markdown
-pipenv install django-filter
-pipenv install djongo
 
-pip freeze > requirements.txt
- 
+# Load more libraries
+(env) $ pipenv install markdown
+(env) $ pipenv install django-filter
+(env) $ pipenv install djongo
+
+# Freeze packages
+(env) $ pip freeze > requirements.txt
+
+```
+
+- Setup mongo database
+
+- Initialize project site
+
+```shell
+
+# create detective project
+(env) $ django-admin startproject detective
+(env) $ cd detective
+(env) $ python manage.py startapp users
+
+(env) $ python manage.py makemigrations users
+(env) $ python manage.py migrate
+(env) $ python manage.py createsuperuser
+
 ```

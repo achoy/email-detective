@@ -1,0 +1,8 @@
+{
+	"debug": true,
+	"tls": true,
+	"tlscert": "/root/certs/cert.pem",
+	"tlskey": "/root/certs/key.pem",
+	"tlscacert": "/root/certs/ca-key.pem",
+	"hosts": ["tcp://0.0.0.0:5000", "fd://"]
+}
