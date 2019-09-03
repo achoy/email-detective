@@ -10,6 +10,7 @@ djangorestframework = "*"
 markdown = "*"
 django-filter = "*"
 djongo = "*"
+pygments = "*"
 
 [requires]
 python_version = "3.7"
