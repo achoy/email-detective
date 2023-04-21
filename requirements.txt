@@ -6,4 +6,4 @@ djongo==1.2.35
 Markdown==3.1.1
 pymongo==3.9.0
 pytz==2019.2
-sqlparse==0.2.4
+sqlparse==0.4.4
